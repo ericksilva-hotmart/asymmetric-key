@@ -11,7 +11,7 @@ public class Decryptor {
     private static final Logger logger = LoggerFactory.getLogger(Decryptor.class);
     private static final LockData lockData = new  LockData();
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args)  {
         String encryptedMessage = "SajHidy4ucYJFOFQHItvhGpL0d3DknhRpWwaaAnrLw586RaZhC83vyQSo5eAhxIlO4mEvHaPmjYBZPQAvmTAgX1OXE2UcqjBko8x/FIUXLUOoU1akqY47vurLOsDOQMlqGMJq5HG7vBCH1ltMv+oIucpD8KSPGfI41akEZVk6iL3UKspHc+t1UtoBfbUfUHmk9dNJ5kj/gnRRzn0U9z4eQHF+pgQJTjNVe1i4ke7zSk87YxwU/xf2WrYGI08aRcKQKxoqrQS9JIth+uWdvIeTXg0yCfhCsfgGmdtYhYGvSmaXbVM+ahSPSliIiOl4ndTurw/Q/tnLc0cCIQT7BOiVA==";
         logger.info("Encrypted Text Length: {}", encryptedMessage.length());
         logger.info("Encrypted Text Base64 Validation: {}", isBase64Encoded(encryptedMessage));

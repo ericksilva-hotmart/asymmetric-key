@@ -18,7 +18,6 @@ import software.amazon.awssdk.services.kms.model.DecryptResponse;
 import software.amazon.awssdk.services.kms.model.GetPublicKeyRequest;
 import software.amazon.awssdk.services.kms.model.GetPublicKeyResponse;
 import software.amazon.awssdk.services.kms.model.KeySpec;
-import software.amazon.awssdk.services.kms.model.KmsException;
 import software.amazon.awssdk.services.kms.model.ScheduleKeyDeletionRequest;
 import software.amazon.awssdk.services.kms.model.ScheduleKeyDeletionResponse;
 
