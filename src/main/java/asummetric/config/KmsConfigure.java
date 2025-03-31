@@ -1,4 +1,4 @@
-package asummetric;
+package asummetric.config;
 
 import java.net.URI;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
