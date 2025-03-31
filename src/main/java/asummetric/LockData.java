@@ -1,6 +1,11 @@
 package asummetric;
 
 import asummetric.config.KmsConfigure;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +13,8 @@ import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kms.KmsClient;
 import software.amazon.awssdk.services.kms.model.DecryptRequest;
 import software.amazon.awssdk.services.kms.model.EncryptRequest;
+import software.amazon.awssdk.services.kms.model.GetPublicKeyRequest;
+import software.amazon.awssdk.services.kms.model.GetPublicKeyResponse;
 
 
 public class LockData {
@@ -51,5 +58,16 @@ public class LockData {
         String decryptMessage = kmsClient.decrypt(decryptRequest).plaintext().asUtf8String();
         logger.info("=== Decrypt -> {}", decryptMessage);
         return decryptMessage;
+    }
+
+    public PublicKey getPublicKey(String keyId) throws InvalidKeySpecException, NoSuchAlgorithmException {
+        GetPublicKeyResponse response = kmsClient.getPublicKey(
+                GetPublicKeyRequest.builder()
+                        .keyId(keyId)
+                        .build());
+
+        byte[] keyBytes = response.publicKey().asByteArray();
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        return keyFactory.generatePublic(new X509EncodedKeySpec(keyBytes));
     }
 }
