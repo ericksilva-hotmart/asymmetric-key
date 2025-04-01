@@ -8,7 +8,6 @@ import software.amazon.awssdk.services.kms.model.DecryptRequest;
 import software.amazon.awssdk.services.kms.model.DecryptResponse;
 import software.amazon.awssdk.services.kms.model.EncryptRequest;
 import software.amazon.awssdk.services.kms.model.EncryptResponse;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +15,7 @@ public class KmsEncryptionDecryption {
 
     private static String LOCAL_ID = "69868d22-5483-4422-9dcf-c99fd5f046f3" ;
     private static String KEY_ID = "arn:aws:kms:us-east-1:000000000000:key/845cfa9f-ebfc-4ba0-a29c-80c4748ca8f6";
+
     public static void main(String[] args) {
         KmsClient kmsClient = KmsConfigure.create();
         String plaintext = "https://google.com2";
