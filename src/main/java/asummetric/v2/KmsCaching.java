@@ -7,23 +7,22 @@ import com.amazonaws.encryptionsdk.CryptoMaterialsManager;
 import com.amazonaws.encryptionsdk.caching.CachingCryptoMaterialsManager;
 import com.amazonaws.encryptionsdk.caching.LocalCryptoMaterialsCache;
 import com.amazonaws.encryptionsdk.kmssdkv2.KmsMasterKeyProvider;
+import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 import software.amazon.awssdk.services.kms.KmsClient;
 import java.nio.charset.StandardCharsets;
 
-public class KmsKeyringWithCachingExample {
+public class KmsCaching {
 
     private final AwsCrypto crypto;
     private final CryptoMaterialsManager materialsManager;
+    private final KmsClient kmsClient;
 
-    public KmsKeyringWithCachingExample(String kmsKeyArn) {
-        // Initialize the AWS Encryption SDK client
+    public KmsCaching(String kmsKeyArn) {
         crypto = AwsCrypto.builder()
                 .withCommitmentPolicy(CommitmentPolicy.RequireEncryptRequireDecrypt)
                 .build();
-
-        // Create KMS client with LocalStack configuration
-        KmsClient kmsClient = KmsConfigure.create();
+        kmsClient = KmsConfigure.create();
 
         // Create KMS Master Key Provider
         KmsMasterKeyProvider keyProvider = KmsMasterKeyProvider.builder()
@@ -39,24 +38,17 @@ public class KmsKeyringWithCachingExample {
                 .build();
     }
 
-    public byte[] encryptData(String plaintext) {
-        return crypto.encryptData(materialsManager, plaintext.getBytes(StandardCharsets.UTF_8)).getResult();
+    public String encryptData(String plaintext) {
+        byte[] encrypted = crypto.encryptData(materialsManager, plaintext.getBytes(StandardCharsets.UTF_8))
+                .getResult();
+        return Base64.getEncoder().encodeToString(encrypted);
     }
 
-    public String decryptData(byte[] ciphertext) {
-        return new String(crypto.decryptData(materialsManager, ciphertext).getResult(), StandardCharsets.UTF_8);
+    public String decryptData(String ciphertext) {
+        byte[] encryptedMessage = Base64.getDecoder().decode(ciphertext);
+        byte[] decrypted = crypto.decryptData(materialsManager, encryptedMessage)
+                .getResult();
+        return new String(decrypted, StandardCharsets.UTF_8);
     }
 
-    public static void main(String[] args) {
-        String kmsKeyArn = "arn:aws:kms:us-east-1:000000000000:key/85baa6f6-d420-4a28-855d-3f06ecebfd6f";
-
-        KmsKeyringWithCachingExample example = new KmsKeyringWithCachingExample(kmsKeyArn);
-
-        String original = "Sensitive data to protect";
-        byte[] ciphertext = example.encryptData(original);
-        String decrypted = example.decryptData(ciphertext);
-
-        System.out.println("Original: " + original);
-        System.out.println("Decrypted: " + decrypted);
-    }
 }

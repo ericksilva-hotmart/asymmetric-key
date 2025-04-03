@@ -47,6 +47,12 @@
             <artifactId>logback-classic</artifactId>
             <version>1.4.12</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.getunleash</groupId>
+            <artifactId>unleash-client-java</artifactId>
+            <version>9.2.0</version>
+        </dependency>
     </dependencies>
 
 
