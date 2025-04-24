@@ -1,7 +1,6 @@
 package asummetric.local;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -10,23 +9,38 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class KeyManagerTest {
 
+    private static final String VALID_MASTER_KEY = "DRx9SZhe9lZvXYJH"; // 16 bytes para AES-128
+    private static final String INVALID_MASTER_KEY = "invalidkey123456";
+
+    @Test
+    void testGetDecryptedKeyShouldThrowExceptionWhenMasterKeyIsNull() {
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
+            KeyManager.getDecryptedKey(null, false);
+        });
+        assertEquals("MASTER_KEY not found.", exception.getMessage());
+    }
+
+    @Test
+    void testGetDecryptedKeyShouldThrowExceptionWhenMasterKeyInvalid() {
+        assertThrows(Exception.class, () -> KeyManager.getDecryptedKey(INVALID_MASTER_KEY, false));
+    }
+
     @Test
     void testGetDecryptedKeyWithInjectedMasterKey() throws Exception {
-        String masterKey = "DRx9SZhe9lZvXYJH";
-
-        String decryptedKey = KeyManager.getDecryptedKey(masterKey);
+        String decryptedKey = KeyManager.getDecryptedKey(VALID_MASTER_KEY, false);
 
         assertNotNull(decryptedKey);
         assertFalse(decryptedKey.isEmpty());
         assertEquals("arn:aws:kms:us-east-1", decryptedKey.substring(0, 21));
+        assertEquals("this-key-only-local-use", decryptedKey.substring(decryptedKey.length() -23));
     }
 
     @Test
-    void testGetDecryptedKeyWithoutEnvVariable() {
-        Executable executable = KeyManager::getDecryptedKey;
+    void testGetDecryptedKeyWithInjectedMasterKeyAndFallBack() throws Exception {
+        String decryptedKey = KeyManager.getDecryptedKey(VALID_MASTER_KEY, true);
 
-        IllegalStateException exception = assertThrows(IllegalStateException.class, executable);
-
-        assertEquals("MASTER_KEY not found.", exception.getMessage());
+        assertNotNull(decryptedKey);
+        assertFalse(decryptedKey.isEmpty());
+        assertEquals("arn:aws:kms:us-east-1", decryptedKey.substring(0, 21));
     }
 }
